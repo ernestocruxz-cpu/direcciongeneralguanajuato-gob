@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listado de autos</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <script defer src="../js/admin-listado.js"></script>
+  </head>
+  <body class="admin-page">
+    <header class="admin-header">
+      <img src="../assets/logo-gobierno.png" alt="Gobierno Secretaria de Gobierno" />
+      <div>
+        <p>Modulo interno</p>
+        <h1>Listado de autos dados de alta</h1>
+        <nav class="admin-nav" aria-label="Navegacion interna">
+          <a href="alta.html">Alta de auto</a>
+          <a class="active" href="listado.html">Listado</a>
+          <a href="login.html">Login</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="list-main">
+      <section class="admin-panel list-panel">
+        <div class="list-toolbar">
+          <div class="panel-title">
+            <span>Registros capturados</span>
+            <p id="record-count">0 autos dados de alta.</p>
+          </div>
+
+          <div class="list-actions">
+            <input id="search-records" type="search" placeholder="Buscar por marca, linea o serie" />
+            <button id="clear-search" class="secondary-button" type="button">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="records-table">
+            <thead>
+              <tr>
+                <th>Folio</th>
+                <th>Expedicion</th>
+                <th>Vencimiento</th>
+                <th>Marca</th>
+                <th>Linea</th>
+                <th>Ano</th>
+                <th>Color</th>
+                <th>Propietario</th>
+                <th>Serie</th>
+                <th>Motor</th>
+                <th>PDF</th>
+              </tr>
+            </thead>
+            <tbody id="records-body"></tbody>
+          </table>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          No hay autos dados de alta todavia.
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

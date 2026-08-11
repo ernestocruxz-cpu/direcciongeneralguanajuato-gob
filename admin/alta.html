@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modulo de alta vehicular</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <script defer src="../js/admin-alta.js"></script>
+  </head>
+  <body class="admin-page">
+    <header class="admin-header">
+      <img src="../assets/logo-gobierno.png" alt="Gobierno Secretaria de Gobierno" />
+      <div>
+        <p>Modulo interno</p>
+        <h1>Alta de informacion vehicular</h1>
+        <nav class="admin-nav" aria-label="Navegacion interna">
+          <a class="active" href="alta.html">Alta de auto</a>
+          <a href="listado.html">Listado</a>
+          <a href="login.html">Login</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <section class="admin-panel">
+        <div class="panel-title">
+          <span>Registro</span>
+          <p>Captura los datos que apareceran en la consulta del folio.</p>
+        </div>
+
+        <form id="vehicle-form" class="vehicle-form">
+          <div class="form-grid">
+            <label>
+              Fecha de expedicion
+              <input name="fechaExpedicion" type="date" required />
+            </label>
+
+            <label>
+              Fecha de vencimiento
+              <input name="fechaVencimiento" type="date" required />
+            </label>
+
+            <label>
+              Marca
+              <input name="marca" type="text" placeholder="VOLKSWAGEN" required />
+            </label>
+
+            <label>
+              Linea
+              <input name="linea" type="text" placeholder="JETTA" required />
+            </label>
+
+            <label>
+              Ano
+              <input name="anio" type="number" min="1900" max="2099" placeholder="2018" required />
+            </label>
+
+            <label>
+              Color
+              <input name="color" type="text" placeholder="ROJO" required />
+            </label>
+
+            <label>
+              Propietario
+              <input name="propietario" type="text" placeholder="LUIS ALBERTO ORDUNA VELAZQUEZ" required />
+            </label>
+
+            <label>
+              Numero de serie
+              <input name="numeroSerie" type="text" placeholder="3VWDB7AJ7JM239701" required />
+            </label>
+
+            <label>
+              Numero de motor
+              <input name="numeroMotor" type="text" placeholder="S" required />
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="secondary-button" type="reset">Limpiar</button>
+            <button class="primary-button" type="submit">Guardar alta</button>
+          </div>
+
+          <p id="save-message" class="save-message" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <aside class="preview-card" aria-label="Vista previa">
+        <h2>Vista previa</h2>
+        <dl>
+          <dt>FECHA DE EXPEDICION:</dt>
+          <dd data-preview="fechaExpedicion">--/--/----</dd>
+
+          <dt>FECHA DE VENCIMIENTO:</dt>
+          <dd data-preview="fechaVencimiento">--/--/----</dd>
+
+          <dt>MARCA:</dt>
+          <dd data-preview="marca">---</dd>
+
+          <dt>LINEA:</dt>
+          <dd data-preview="linea">---</dd>
+
+          <dt>ANO:</dt>
+          <dd data-preview="anio">----</dd>
+
+          <dt>COLOR:</dt>
+          <dd data-preview="color">---</dd>
+
+          <dt>PROPIETARIO:</dt>
+          <dd data-preview="propietario">---</dd>
+
+          <dt>NUMERO DE SERIE:</dt>
+          <dd data-preview="numeroSerie">---</dd>
+
+          <dt>NUMERO DE MOTOR:</dt>
+          <dd data-preview="numeroMotor">---</dd>
+        </dl>
+      </aside>
+    </main>
+  </body>
+</html>
