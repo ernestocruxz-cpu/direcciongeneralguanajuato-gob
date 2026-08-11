@@ -96,7 +96,7 @@ export async function buildPermitPdf(vehicle) {
 
     const qrBuffer = dataUrlToBuffer(vehicle.qr_data_url);
     if (qrBuffer) {
-      doc.image(qrBuffer, x + 15, y + 78, { width: 65, height: 65 });
+      doc.image(qrBuffer, x + 100, y - 7, { width: 65, height: 65 });
     }
 
     doc.font("Helvetica").fontSize(5.8).fillColor("#686868");
@@ -170,7 +170,7 @@ export async function buildPermitPdf(vehicle) {
     );
 
     if (fs.existsSync(congresoPath)) {
-      const congresoX = right - 124;
+      const congresoX = right - 81;
       const congresoY = y + 276;
       const congresoW = 72;
       const congresoH = 39;
