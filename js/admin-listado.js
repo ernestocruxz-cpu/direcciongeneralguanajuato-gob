@@ -2,12 +2,25 @@ const recordsBody = document.querySelector("#records-body");
 const emptyState = document.querySelector("#empty-state");
 const recordCount = document.querySelector("#record-count");
 const searchInput = document.querySelector("#search-records");
+const createdDateFilter = document.querySelector("#created-date-filter");
+const pageSizeSelect = document.querySelector("#page-size");
 const clearSearch = document.querySelector("#clear-search");
+const prevPageButton = document.querySelector("#prev-page");
+const nextPageButton = document.querySelector("#next-page");
+const pageStatus = document.querySelector("#page-status");
 const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "4000"
   ? "http://localhost:4000"
   : "";
 const token = sessionStorage.getItem("adminToken");
 let records = [];
+let currentPage = 1;
+let pagination = {
+  page: 1,
+  pageSize: 10,
+  total: 0,
+  totalPages: 1,
+};
+let searchTimer = null;
 
 if (!token) {
   window.location.href = "login.html";
@@ -19,33 +32,13 @@ function formatDate(value) {
   return `${day}/${month}/${year}`;
 }
 
-function matchesSearch(record, query) {
-  if (!query) return true;
-  const haystack = [
-    record.folio,
-    record.brand,
-    record.line,
-    record.model_year,
-    record.color,
-    record.owner_name,
-    record.serial_number,
-    record.engine_number,
-  ]
-    .join(" ")
-    .toLowerCase();
-
-  return haystack.includes(query.toLowerCase());
-}
-
 function renderRecords() {
-  const query = searchInput.value.trim();
-  const filtered = records.filter((record) => matchesSearch(record, query));
-
   recordsBody.innerHTML = "";
-  filtered.forEach((record) => {
+  records.forEach((record) => {
     const row = document.createElement("tr");
     const cells = [
       record.folio,
+      formatDate(record.created_at),
       formatDate(record.issue_date),
       formatDate(record.expiration_date),
       record.brand,
@@ -75,8 +68,11 @@ function renderRecords() {
     recordsBody.appendChild(row);
   });
 
-  recordCount.textContent = `${filtered.length} de ${records.length} autos dados de alta.`;
-  emptyState.hidden = filtered.length > 0;
+  recordCount.textContent = `${pagination.total} autos dados de alta.`;
+  pageStatus.textContent = `Pagina ${pagination.page} de ${pagination.totalPages}`;
+  prevPageButton.disabled = pagination.page <= 1;
+  nextPageButton.disabled = pagination.page >= pagination.totalPages;
+  emptyState.hidden = records.length > 0;
 }
 
 function getModalRoot() {
@@ -182,7 +178,17 @@ async function downloadPdf(folio) {
 async function loadRecords() {
   try {
     recordCount.textContent = "Cargando autos...";
-    const response = await fetch(`${apiBase}/api/vehicles`, {
+    const params = new URLSearchParams({
+      page: String(currentPage),
+      pageSize: pageSizeSelect.value,
+    });
+    const search = searchInput.value.trim();
+    const createdDate = createdDateFilter.value;
+
+    if (search) params.set("search", search);
+    if (createdDate) params.set("createdDate", createdDate);
+
+    const response = await fetch(`${apiBase}/api/vehicles?${params.toString()}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const result = await response.json();
@@ -191,7 +197,14 @@ async function loadRecords() {
       throw new Error(result.message || "No fue posible cargar el listado.");
     }
 
-    records = result.vehicles;
+    records = result.vehicles || [];
+    pagination = result.pagination || {
+      page: currentPage,
+      pageSize: Number(pageSizeSelect.value),
+      total: records.length,
+      totalPages: 1,
+    };
+    currentPage = pagination.page;
     renderRecords();
   } catch (error) {
     recordsBody.innerHTML = "";
@@ -201,10 +214,33 @@ async function loadRecords() {
   }
 }
 
-searchInput.addEventListener("input", renderRecords);
+function reloadFromFirstPage() {
+  currentPage = 1;
+  loadRecords();
+}
+
+searchInput.addEventListener("input", () => {
+  window.clearTimeout(searchTimer);
+  searchTimer = window.setTimeout(reloadFromFirstPage, 300);
+});
+createdDateFilter.addEventListener("change", reloadFromFirstPage);
+pageSizeSelect.addEventListener("change", reloadFromFirstPage);
 clearSearch.addEventListener("click", () => {
   searchInput.value = "";
-  renderRecords();
+  createdDateFilter.value = "";
+  reloadFromFirstPage();
+});
+prevPageButton.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage -= 1;
+    loadRecords();
+  }
+});
+nextPageButton.addEventListener("click", () => {
+  if (currentPage < pagination.totalPages) {
+    currentPage += 1;
+    loadRecords();
+  }
 });
 
 loadRecords();

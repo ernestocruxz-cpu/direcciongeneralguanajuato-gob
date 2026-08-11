@@ -3,27 +3,70 @@ import { query } from "../config/db.js";
 import { env } from "../config/env.js";
 
 async function generateUniqueFolio() {
-  for (let attempt = 0; attempt < 20; attempt += 1) {
-    const folio = String(Math.floor(Math.random() * 100000)).padStart(5, "0");
-    const result = await query("select 1 from vehicles where folio = $1 limit 1", [folio]);
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    const result = await query(
+      `insert into vehicle_folio_sequence default values
+       returning lpad(id::text, 6, '0') as folio`
+    );
+    const folio = result.rows[0].folio;
+    const exists = await query("select 1 from vehicles where folio = $1 limit 1", [folio]);
 
-    if (result.rowCount === 0) {
-      return folio;
-    }
+    if (exists.rowCount === 0) return folio;
   }
 
   throw { status: 500, message: "No fue posible generar un folio unico." };
 }
 
-export async function listVehicleRecords() {
+export async function listVehicleRecords({ page = 1, pageSize = 10, search = "", createdDate = "" } = {}) {
+  const safePage = Math.max(Number(page) || 1, 1);
+  const allowedPageSizes = [10, 25, 50, 100];
+  const safePageSize = allowedPageSizes.includes(Number(pageSize)) ? Number(pageSize) : 10;
+  const offset = (safePage - 1) * safePageSize;
+  const params = [];
+  const where = [];
+
+  if (search) {
+    params.push(`%${String(search).trim().toLowerCase()}%`);
+    where.push(`(
+      lower(folio) like $${params.length}
+      or lower(brand) like $${params.length}
+      or lower(line) like $${params.length}
+      or lower(color) like $${params.length}
+      or lower(owner_name) like $${params.length}
+      or lower(serial_number) like $${params.length}
+      or lower(engine_number) like $${params.length}
+      or model_year::text like $${params.length}
+    )`);
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(String(createdDate))) {
+    params.push(createdDate);
+    where.push(`created_at::date = $${params.length}::date`);
+  }
+
+  const whereSql = where.length ? `where ${where.join(" and ")}` : "";
+  const countResult = await query(`select count(*)::int as total from vehicles ${whereSql}`, params);
+  const total = countResult.rows[0]?.total || 0;
+  const resultParams = [...params, safePageSize, offset];
   const result = await query(
     `select id, folio, issue_date, expiration_date, brand, line, model_year,
             color, owner_name, serial_number, engine_number, qr_payload, created_at
      from vehicles
-     order by created_at desc`
+     ${whereSql}
+     order by created_at desc
+     limit $${resultParams.length - 1} offset $${resultParams.length}`,
+    resultParams
   );
 
-  return result.rows;
+  return {
+    vehicles: result.rows,
+    pagination: {
+      page: safePage,
+      pageSize: safePageSize,
+      total,
+      totalPages: Math.max(Math.ceil(total / safePageSize), 1),
+    },
+  };
 }
 
 export async function getVehicleByFolio(folio) {

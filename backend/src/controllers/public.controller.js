@@ -4,8 +4,8 @@ export async function getVehicleByFolioPublic(req, res, next) {
   try {
     const folio = String(req.params.folio || "").trim();
 
-    if (!/^\d{5}$/.test(folio)) {
-      return next({ status: 400, message: "El folio debe tener 5 digitos." });
+    if (!/^\d{6}$/.test(folio)) {
+      return next({ status: 400, message: "El folio debe tener 6 digitos." });
     }
 
     const vehicle = await getVehicleByFolio(folio);

@@ -4,8 +4,13 @@ import { createVehicleSchema } from "../validators/vehicle.validator.js";
 
 export async function listVehicles(req, res, next) {
   try {
-    const vehicles = await listVehicleRecords();
-    res.json({ ok: true, vehicles });
+    const result = await listVehicleRecords({
+      page: req.query.page,
+      pageSize: req.query.pageSize,
+      search: req.query.search,
+      createdDate: req.query.createdDate,
+    });
+    res.json({ ok: true, ...result });
   } catch (error) {
     next(error);
   }
@@ -25,8 +30,8 @@ export async function downloadVehiclePermit(req, res, next) {
   try {
     const folio = String(req.params.folio || "").trim();
 
-    if (!/^\d{5}$/.test(folio)) {
-      return next({ status: 400, message: "El folio debe tener 5 digitos." });
+    if (!/^\d{6}$/.test(folio)) {
+      return next({ status: 400, message: "El folio debe tener 6 digitos." });
     }
 
     const vehicle = await getVehicleByFolio(folio);

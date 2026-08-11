@@ -5,7 +5,7 @@ Arquitectura sencilla para pasar la maqueta a backend real:
 - Node.js + Express
 - PostgreSQL
 - Login con JWT y bcrypt
-- Alta vehicular con folio unico de 5 digitos
+- Alta vehicular con folio unico de 6 digitos
 - QR generado como Data URL
 - Consulta publica por folio
 

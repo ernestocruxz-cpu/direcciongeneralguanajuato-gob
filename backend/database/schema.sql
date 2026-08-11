@@ -23,17 +23,23 @@ create table if not exists users (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists vehicle_folio_sequence (
+  id integer generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  check (id between 1 and 999999)
+);
+
 create table if not exists vehicles (
   id uuid primary key default gen_random_uuid(),
-  folio char(5) not null unique check (folio ~ '^[0-9]{5}$'),
+  folio char(6) not null unique check (folio ~ '^[0-9]{6}$'),
   issue_date date not null,
   expiration_date date not null,
   brand varchar(80) not null,
   line varchar(80) not null,
-  model_year integer not null check (model_year between 1900 and 2100),
+  model_year integer not null check (model_year between 1000 and 9999),
   color varchar(60) not null,
   owner_name varchar(160) not null,
-  serial_number varchar(40) not null,
+  serial_number varchar(17) not null,
   engine_number varchar(40) not null,
   qr_payload text,
   qr_data_url text,

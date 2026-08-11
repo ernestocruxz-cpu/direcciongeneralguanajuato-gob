@@ -103,7 +103,7 @@ function renderNotFoundResult(folio) {
 async function loadDigitalResult(folio) {
   showResultLayout();
 
-  if (!/^\d{5}$/.test(folio)) {
+  if (!/^\d{6}$/.test(folio)) {
     renderNotFoundResult(folio);
     return;
   }
@@ -136,8 +136,8 @@ if (form) {
     event.preventDefault();
     const folio = input.value.trim();
 
-    if (!/^\d{5}$/.test(folio)) {
-      message.textContent = "Ingresa un folio valido de 5 digitos.";
+    if (!/^\d{6}$/.test(folio)) {
+      message.textContent = "Ingresa un folio valido de 6 digitos.";
       input.focus();
       return;
     }
