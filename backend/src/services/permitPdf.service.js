@@ -1,4 +1,5 @@
 import PDFDocument from "pdfkit";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,6 +10,7 @@ const policePath = path.join(assetsDir, "police.png");
 const sspegPath = path.join(assetsDir, "sspeg.png");
 const movilidadIconPath = path.join(assetsDir, "movilidad-icon-clean.png");
 const movilidadTextPath = path.join(assetsDir, "movilidad-text-clean.png");
+const congresoPath = path.join(assetsDir, "congreso-guanajuato.png");
 
 function formatDate(value) {
   if (!value) return "";
@@ -167,16 +169,18 @@ export async function buildPermitPdf(vehicle) {
       { width: 310, height: 12 }
     );
 
-    doc.save();
-    doc.circle(right - 90, y + 279, 17).stroke("#858c86");
-    doc.font("Helvetica").fontSize(4.6).fillColor("#666666");
-    fitText(doc, "SELLO", right - 101, y + 273, { width: 22, align: "center", height: 6 });
-    fitText(doc, "OFICIAL", right - 104, y + 280, { width: 28, align: "center", height: 6 });
-    doc.restore();
+    if (fs.existsSync(congresoPath)) {
+      doc.image(congresoPath, right - 124, y + 256, { width: 72, height: 39, fit: [72, 39] });
+    }
 
-    doc.moveTo(right - 126, y + 304).lineTo(right - 47, y + 304).stroke("#777777");
+    doc.moveTo(right - 126, y + 298).lineTo(right - 47, y + 298).stroke("#777777");
     doc.font("Helvetica-Bold").fontSize(4.4).fillColor("#5d5d5d");
-    doc.text("EL JEFE DE LA OFICINA REGIONAL DE MOVILIDAD", right - 148, y + 309, {
+    doc.text("ATENTAMENTE", right - 148, y + 301, {
+      width: 126,
+      align: "center",
+      height: 6,
+    });
+    doc.text("EL JEFE DE LA OFICINA REGIONAL DE MOVILIDAD", right - 148, y + 308, {
       width: 126,
       align: "center",
       height: 12,
