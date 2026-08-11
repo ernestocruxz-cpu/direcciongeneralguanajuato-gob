@@ -170,17 +170,30 @@ export async function buildPermitPdf(vehicle) {
     );
 
     if (fs.existsSync(congresoPath)) {
-      doc.image(congresoPath, right - 124, y + 256, { width: 72, height: 39, fit: [72, 39] });
+      const congresoX = right - 124;
+      const congresoY = y + 276;
+      const congresoW = 72;
+      const congresoH = 39;
+      doc.save();
+      doc.rotate(15, {
+        origin: [congresoX + congresoW / 2, congresoY + congresoH / 2],
+      });
+      doc.image(congresoPath, congresoX, congresoY, {
+        width: congresoW,
+        height: congresoH,
+        fit: [congresoW, congresoH],
+      });
+      doc.restore();
     }
 
-    doc.moveTo(right - 126, y + 298).lineTo(right - 47, y + 298).stroke("#777777");
+    doc.moveTo(right - 126, y + 306).lineTo(right - 47, y + 306).stroke("#777777");
     doc.font("Helvetica-Bold").fontSize(4.4).fillColor("#5d5d5d");
-    doc.text("ATENTAMENTE", right - 148, y + 301, {
+    doc.text("ATENTAMENTE", right - 148, y + 309, {
       width: 126,
       align: "center",
       height: 6,
     });
-    doc.text("EL JEFE DE LA OFICINA REGIONAL DE MOVILIDAD", right - 148, y + 308, {
+    doc.text("EL JEFE DE LA OFICINA REGIONAL DE MOVILIDAD", right - 148, y + 316, {
       width: 126,
       align: "center",
       height: 12,
