@@ -68,7 +68,7 @@ function renderRecords() {
     button.className = "table-button";
     button.type = "button";
     button.textContent = "PDF";
-    button.addEventListener("click", () => downloadPdf(record.folio));
+    button.addEventListener("click", () => confirmAndDownloadPdf(record));
     actionCell.appendChild(button);
     row.appendChild(actionCell);
 
@@ -79,21 +79,104 @@ function renderRecords() {
   emptyState.hidden = filtered.length > 0;
 }
 
-async function downloadPdf(folio) {
-  const response = await fetch(`${apiBase}/api/vehicles/${folio}/pdf`, {
-    headers: { Authorization: `Bearer ${token}` },
+function getModalRoot() {
+  let root = document.querySelector("#app-modal-root");
+  if (!root) {
+    root = document.createElement("div");
+    root.id = "app-modal-root";
+    document.body.appendChild(root);
+  }
+  return root;
+}
+
+function escapeHtml(value) {
+  const span = document.createElement("span");
+  span.textContent = value == null ? "" : String(value);
+  return span.innerHTML;
+}
+
+function showModal({ title, body, confirmText = "Aceptar", cancelText = "Cancelar", showCancel = true }) {
+  return new Promise((resolve) => {
+    const root = getModalRoot();
+    root.innerHTML = `
+      <div class="app-modal-backdrop" role="presentation">
+        <section class="app-modal" role="dialog" aria-modal="true" aria-labelledby="app-modal-title">
+          <h2 id="app-modal-title">${title}</h2>
+          <div class="app-modal-body">${body}</div>
+          <div class="app-modal-actions">
+            ${showCancel ? `<button class="secondary-button" type="button" data-modal-cancel>${cancelText}</button>` : ""}
+            <button class="primary-button" type="button" data-modal-confirm>${confirmText}</button>
+          </div>
+        </section>
+      </div>
+    `;
+
+    const close = (value) => {
+      root.innerHTML = "";
+      resolve(value);
+    };
+
+    root.querySelector("[data-modal-confirm]").focus();
+    root.querySelector("[data-modal-confirm]").addEventListener("click", () => close(true));
+    root.querySelector("[data-modal-cancel]")?.addEventListener("click", () => close(false));
+  });
+}
+
+async function confirmAndDownloadPdf(record) {
+  const confirmed = await showModal({
+    title: "Descargar formato",
+    body: `
+      <p>Confirma que deseas descargar el formato PDF de este folio.</p>
+      <dl class="modal-summary">
+        <dt>Folio</dt><dd>${escapeHtml(record.folio)}</dd>
+        <dt>Marca</dt><dd>${escapeHtml(record.brand)}</dd>
+        <dt>Linea</dt><dd>${escapeHtml(record.line)}</dd>
+        <dt>Serie</dt><dd>${escapeHtml(record.serial_number)}</dd>
+      </dl>
+    `,
+    confirmText: "Descargar",
+    cancelText: "Cancelar",
   });
 
-  if (!response.ok) {
-    const result = await response.json();
-    alert(result.message || "No fue posible generar el PDF.");
-    return;
+  if (confirmed) {
+    await downloadPdf(record.folio);
   }
+}
 
-  const blob = await response.blob();
-  const url = URL.createObjectURL(blob);
-  window.open(url, "_blank", "noopener");
-  window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+async function downloadPdf(folio) {
+  try {
+    const response = await fetch(`${apiBase}/api/vehicles/${folio}/pdf`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      const result = await response.json();
+      await showModal({
+        title: "No fue posible descargar",
+        body: `<p>${escapeHtml(result.message || "No fue posible generar el PDF.")}</p>`,
+        confirmText: "Aceptar",
+        showCancel: false,
+      });
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `permiso-${folio}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+  } catch {
+    await showModal({
+      title: "No fue posible descargar",
+      body: "<p>Revisa tu conexion o intenta nuevamente.</p>",
+      confirmText: "Aceptar",
+      showCancel: false,
+    });
+  }
 }
 
 async function loadRecords() {

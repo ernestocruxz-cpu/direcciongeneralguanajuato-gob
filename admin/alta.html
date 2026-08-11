@@ -43,7 +43,9 @@
 
             <label>
               Marca
-              <input name="marca" type="text" placeholder="VOLKSWAGEN" required />
+              <select name="marca" required>
+                <option value="">Selecciona una marca</option>
+              </select>
             </label>
 
             <label>
@@ -53,7 +55,7 @@
 
             <label>
               Ano
-              <input name="anio" type="number" min="1900" max="2099" placeholder="2018" required />
+              <input name="anio" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="2018" required />
             </label>
 
             <label>
@@ -68,7 +70,7 @@
 
             <label>
               Numero de serie
-              <input name="numeroSerie" type="text" placeholder="3VWDB7AJ7JM239701" required />
+              <input name="numeroSerie" type="text" maxlength="17" placeholder="3VWDB7AJ7JM239701" required />
             </label>
 
             <label>

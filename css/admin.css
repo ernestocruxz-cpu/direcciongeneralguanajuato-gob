@@ -118,7 +118,8 @@
   text-transform: uppercase;
 }
 
-.form-grid input {
+.form-grid input,
+.form-grid select {
   width: 100%;
   height: 50px;
   border: 1px solid #c7ced8;
@@ -132,7 +133,17 @@
   background: #ffffff;
 }
 
-.form-grid input:focus {
+.form-grid select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #005395 50%),
+    linear-gradient(135deg, #005395 50%, transparent 50%);
+  background-position: calc(100% - 20px) 21px, calc(100% - 14px) 21px;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
   border-color: #005395;
   box-shadow: 0 0 0 3px rgba(0, 83, 149, 0.15);
 }
@@ -384,6 +395,70 @@
 
 .empty-state[hidden] {
   display: none;
+}
+
+.app-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(10, 31, 55, 0.48);
+}
+
+.app-modal {
+  width: min(100%, 520px);
+  border: 1px solid #c8dff1;
+  border-radius: 8px;
+  padding: 26px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgba(0, 33, 68, 0.28);
+}
+
+.app-modal h2 {
+  margin: 0 0 12px;
+  color: #003767;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 26px;
+}
+
+.app-modal-body {
+  color: #31445a;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.app-modal-body p {
+  margin: 0 0 16px;
+}
+
+.modal-summary {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 8px 14px;
+  margin: 0;
+  border-top: 1px solid #d7e5f2;
+  padding-top: 14px;
+}
+
+.modal-summary dt {
+  color: #003767;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.modal-summary dd {
+  margin: 0;
+  color: #1f2937;
+  overflow-wrap: anywhere;
+}
+
+.app-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
 }
 
 @media (max-width: 980px) {
