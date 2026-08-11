@@ -3,7 +3,9 @@ const emptyState = document.querySelector("#empty-state");
 const recordCount = document.querySelector("#record-count");
 const searchInput = document.querySelector("#search-records");
 const clearSearch = document.querySelector("#clear-search");
-const apiBase = window.location.port === "4000" ? "" : "http://localhost:4000";
+const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "4000"
+  ? "http://localhost:4000"
+  : "";
 const token = sessionStorage.getItem("adminToken");
 let records = [];
 

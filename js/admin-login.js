@@ -1,6 +1,8 @@
 const loginForm = document.querySelector("#login-form");
 const loginMessage = document.querySelector("#login-message");
-const apiBase = window.location.port === "4000" ? "" : "http://localhost:4000";
+const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "4000"
+  ? "http://localhost:4000"
+  : "";
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();

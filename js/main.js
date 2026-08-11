@@ -3,7 +3,9 @@ const mainMenu = document.querySelector("#main-menu");
 const form = document.querySelector(".folio-form");
 const input = document.querySelector("#folio");
 const message = document.querySelector(".form-message");
-const apiBase = window.location.port === "4000" ? "" : "http://localhost:4000";
+const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "4000"
+  ? "http://localhost:4000"
+  : "";
 
 menuButton.addEventListener("click", () => {
   const isOpen = mainMenu.classList.toggle("open");

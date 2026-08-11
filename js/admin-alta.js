@@ -1,7 +1,9 @@
 const form = document.querySelector("#vehicle-form");
 const message = document.querySelector("#save-message");
 const previewNodes = document.querySelectorAll("[data-preview]");
-const apiBase = window.location.port === "4000" ? "" : "http://localhost:4000";
+const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "4000"
+  ? "http://localhost:4000"
+  : "";
 const token = sessionStorage.getItem("adminToken");
 
 if (!token) {
