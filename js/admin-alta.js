@@ -2,6 +2,7 @@ const form = document.querySelector("#vehicle-form");
 const message = document.querySelector("#save-message");
 const previewNodes = document.querySelectorAll("[data-preview]");
 const userNameNode = document.querySelector("[data-user-name]");
+const userInitialNode = document.querySelector("[data-user-initial]");
 const brandSelect = form.elements.marca;
 const issueDateInput = form.elements.fechaExpedicion;
 const expirationDateInput = form.elements.fechaVencimiento;
@@ -84,9 +85,12 @@ if (!token) {
 
 try {
   const adminUser = JSON.parse(sessionStorage.getItem("adminUser") || "{}");
-  userNameNode.textContent = adminUser.name || adminUser.email || "Usuario";
+  const displayName = adminUser.name || adminUser.email || "Usuario";
+  userNameNode.textContent = displayName;
+  userInitialNode.textContent = displayName.trim().charAt(0).toUpperCase() || "U";
 } catch {
   userNameNode.textContent = "Usuario";
+  userInitialNode.textContent = "U";
 }
 
 logoutButton?.addEventListener("click", () => {

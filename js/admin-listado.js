@@ -2,6 +2,7 @@ const recordsBody = document.querySelector("#records-body");
 const emptyState = document.querySelector("#empty-state");
 const recordCount = document.querySelector("#record-count");
 const userNameNode = document.querySelector("[data-user-name]");
+const userInitialNode = document.querySelector("[data-user-initial]");
 const searchInput = document.querySelector("#search-records");
 const createdDateFilter = document.querySelector("#created-date-filter");
 const pageSizeSelect = document.querySelector("#page-size");
@@ -30,9 +31,12 @@ if (!token) {
 
 try {
   const adminUser = JSON.parse(sessionStorage.getItem("adminUser") || "{}");
-  userNameNode.textContent = adminUser.name || adminUser.email || "Usuario";
+  const displayName = adminUser.name || adminUser.email || "Usuario";
+  userNameNode.textContent = displayName;
+  userInitialNode.textContent = displayName.trim().charAt(0).toUpperCase() || "U";
 } catch {
   userNameNode.textContent = "Usuario";
+  userInitialNode.textContent = "U";
 }
 
 logoutButton?.addEventListener("click", () => {
