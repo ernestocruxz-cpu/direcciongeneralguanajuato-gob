@@ -1,6 +1,7 @@
 const form = document.querySelector("#vehicle-form");
 const message = document.querySelector("#save-message");
 const previewNodes = document.querySelectorAll("[data-preview]");
+const userNameNode = document.querySelector("[data-user-name]");
 const brandSelect = form.elements.marca;
 const issueDateInput = form.elements.fechaExpedicion;
 const expirationDateInput = form.elements.fechaVencimiento;
@@ -79,6 +80,13 @@ const vehicleBrands = [
 
 if (!token) {
   window.location.href = "login.html";
+}
+
+try {
+  const adminUser = JSON.parse(sessionStorage.getItem("adminUser") || "{}");
+  userNameNode.textContent = adminUser.name || adminUser.email || "Usuario";
+} catch {
+  userNameNode.textContent = "Usuario";
 }
 
 logoutButton?.addEventListener("click", () => {

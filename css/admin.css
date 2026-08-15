@@ -5,16 +5,66 @@
 
 .admin-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 28px;
   padding: 22px 54px;
   background: #ffffff;
   border-bottom: 1px solid #c2b76c;
 }
 
-.admin-header img {
-  width: 245px;
-  height: auto;
+.admin-user-menu {
+  position: relative;
+  width: 220px;
+  flex: 0 0 220px;
+}
+
+.admin-user-menu details {
+  position: relative;
+}
+
+.admin-user-menu summary {
+  display: grid;
+  gap: 4px;
+  min-height: 58px;
+  border: 1px solid #c7d7e8;
+  border-radius: 7px;
+  padding: 10px 14px;
+  color: #003767;
+  background: #f7fbff;
+  cursor: pointer;
+  list-style: none;
+}
+
+.admin-user-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-user-menu summary span {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.admin-user-menu summary strong {
+  overflow: hidden;
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-user-menu details[open] summary {
+  border-color: #005395;
+}
+
+.admin-user-menu .logout-button {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  justify-content: center;
+  box-shadow: 0 14px 28px rgba(0, 53, 103, 0.12);
 }
 
 .admin-header p {
@@ -251,13 +301,6 @@
   padding: 34px;
   background: #ffffff;
   box-shadow: 0 18px 38px rgba(0, 53, 103, 0.1);
-}
-
-.login-card img {
-  width: 260px;
-  max-width: 100%;
-  display: block;
-  margin-bottom: 24px;
 }
 
 .login-kicker,
@@ -573,8 +616,9 @@
     padding: 22px;
   }
 
-  .admin-header img {
-    width: 220px;
+  .admin-user-menu {
+    width: min(100%, 300px);
+    flex-basis: auto;
   }
 
   .admin-main {

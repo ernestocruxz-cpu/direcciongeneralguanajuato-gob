@@ -10,14 +10,21 @@
   </head>
   <body class="admin-page">
     <header class="admin-header">
-      <img src="../assets/logo-gobierno.png" alt="Gobierno Secretaria de Gobierno" />
+      <section class="admin-user-menu" aria-label="Sesion de usuario">
+        <details>
+          <summary>
+            <span>Usuario</span>
+            <strong data-user-name>Usuario</strong>
+          </summary>
+          <button class="logout-button" type="button" data-logout>Cerrar sesion</button>
+        </details>
+      </section>
       <div>
         <p>Modulo interno</p>
         <h1>Alta de informacion vehicular</h1>
         <nav class="admin-nav" aria-label="Navegacion interna">
           <a class="active" href="alta.html">Alta de auto</a>
           <a href="listado.html">Listado</a>
-          <button class="logout-button" type="button" data-logout>Cerrar sesion</button>
         </nav>
       </div>
     </header>
