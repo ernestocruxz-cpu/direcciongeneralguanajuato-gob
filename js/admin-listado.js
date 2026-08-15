@@ -11,11 +11,13 @@ const prevPageButton = document.querySelector("#prev-page");
 const nextPageButton = document.querySelector("#next-page");
 const pageStatus = document.querySelector("#page-status");
 const logoutButton = document.querySelector("[data-logout]");
+const statusTabs = document.querySelectorAll("[data-status-tab]");
 const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "4000"
   ? "http://localhost:4000"
   : "";
 const token = sessionStorage.getItem("adminToken");
 let records = [];
+let currentStatus = "activo";
 let currentPage = 1;
 let pagination = {
   page: 1,
@@ -117,11 +119,15 @@ function renderRecords() {
     recordsBody.appendChild(row);
   });
 
-  recordCount.textContent = `${pagination.total} autos dados de alta.`;
+  const statusLabel = currentStatus === "activo" ? "activos" : "inactivos";
+  recordCount.textContent = `${pagination.total} autos ${statusLabel}.`;
   pageStatus.textContent = `Pagina ${pagination.page} de ${pagination.totalPages}`;
   prevPageButton.disabled = pagination.page <= 1;
   nextPageButton.disabled = pagination.page >= pagination.totalPages;
   emptyState.hidden = records.length > 0;
+  emptyState.textContent = currentStatus === "activo"
+    ? "No hay autos activos con los filtros seleccionados."
+    : "No hay autos inactivos con los filtros seleccionados.";
 }
 
 function getModalRoot() {
@@ -275,6 +281,7 @@ async function loadRecords() {
     const params = new URLSearchParams({
       page: String(currentPage),
       pageSize: pageSizeSelect.value,
+      validityStatus: currentStatus,
     });
     const search = searchInput.value.trim();
     const createdDate = createdDateFilter.value;
@@ -313,9 +320,24 @@ function reloadFromFirstPage() {
   loadRecords();
 }
 
+function updateStatusTabs() {
+  statusTabs.forEach((tab) => {
+    const isActive = tab.dataset.statusTab === currentStatus;
+    tab.classList.toggle("active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+  });
+}
+
 searchInput.addEventListener("input", () => {
   window.clearTimeout(searchTimer);
   searchTimer = window.setTimeout(reloadFromFirstPage, 300);
+});
+statusTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    currentStatus = tab.dataset.statusTab || "activo";
+    updateStatusTabs();
+    reloadFromFirstPage();
+  });
 });
 createdDateFilter.addEventListener("change", reloadFromFirstPage);
 pageSizeSelect.addEventListener("change", reloadFromFirstPage);
@@ -337,4 +359,5 @@ nextPageButton.addEventListener("click", () => {
   }
 });
 
+updateStatusTabs();
 loadRecords();

@@ -17,13 +17,26 @@ async function generateUniqueFolio() {
   throw { status: 500, message: "No fue posible generar un folio unico." };
 }
 
-export async function listVehicleRecords({ page = 1, pageSize = 10, search = "", createdDate = "" } = {}) {
+export async function listVehicleRecords({
+  page = 1,
+  pageSize = 10,
+  search = "",
+  createdDate = "",
+  validityStatus = "activo",
+} = {}) {
   const safePage = Math.max(Number(page) || 1, 1);
   const allowedPageSizes = [10, 25, 50, 100];
   const safePageSize = allowedPageSizes.includes(Number(pageSize)) ? Number(pageSize) : 10;
   const offset = (safePage - 1) * safePageSize;
   const params = [];
   const where = ["status = 'activo'"];
+  const normalizedValidityStatus = String(validityStatus).toLowerCase() === "inactivo" ? "inactivo" : "activo";
+
+  if (normalizedValidityStatus === "activo") {
+    where.push("expiration_date >= current_date");
+  } else {
+    where.push("expiration_date < current_date");
+  }
 
   if (search) {
     params.push(`%${String(search).trim().toLowerCase()}%`);

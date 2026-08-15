@@ -25,6 +25,7 @@ export async function listVehicles(req, res, next) {
       pageSize: req.query.pageSize,
       search: req.query.search,
       createdDate: req.query.createdDate,
+      validityStatus: req.query.validityStatus,
     });
     res.json({ ok: true, ...result });
   } catch (error) {

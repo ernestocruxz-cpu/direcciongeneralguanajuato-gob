@@ -44,11 +44,17 @@
 .admin-user-menu summary::after {
   position: absolute;
   right: 15px;
-  color: #005395;
-  content: "v";
-  font-size: 13px;
-  font-weight: 800;
-  line-height: 1;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #005395;
+  border-bottom: 2px solid #005395;
+  content: "";
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.18s ease;
+}
+
+.admin-user-menu details[open] summary::after {
+  transform: rotate(225deg) translate(-2px, -1px);
 }
 
 .admin-user-menu summary::-webkit-details-marker {
@@ -436,6 +442,34 @@
 .list-actions select {
   max-width: 104px;
   font-weight: 700;
+}
+
+.status-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 20px;
+  border-bottom: 1px solid #d7e5f2;
+  padding-bottom: 14px;
+}
+
+.status-tabs button {
+  min-height: 38px;
+  border: 1px solid #c7d7e8;
+  border-radius: 999px;
+  padding: 0 16px;
+  color: #005395;
+  background: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.status-tabs button.active,
+.status-tabs button:hover {
+  color: #ffffff;
+  background: #005395;
+  border-color: #005395;
 }
 
 .table-wrap {
