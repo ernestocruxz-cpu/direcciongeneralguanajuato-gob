@@ -313,7 +313,7 @@
 }
 
 .list-main {
-  width: min(1280px, calc(100% - 48px));
+  width: min(1500px, calc(100% - 48px));
   margin: 34px auto;
 }
 
@@ -350,10 +350,11 @@
 
 .records-table {
   width: 100%;
-  min-width: 980px;
+  min-width: 1390px;
   border-collapse: collapse;
   color: #003767;
   font-size: 15px;
+  table-layout: auto;
 }
 
 .records-table th,
@@ -371,7 +372,71 @@
 }
 
 .records-table td {
+  overflow-wrap: normal;
+}
+
+.records-table th:nth-child(1),
+.records-table td:nth-child(1) {
+  min-width: 82px;
+  white-space: nowrap;
+}
+
+.records-table th:nth-child(2),
+.records-table td:nth-child(2),
+.records-table th:nth-child(3),
+.records-table td:nth-child(3),
+.records-table th:nth-child(4),
+.records-table td:nth-child(4) {
+  min-width: 118px;
+  white-space: nowrap;
+}
+
+.records-table th:nth-child(5),
+.records-table td:nth-child(5) {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.records-table th:nth-child(6),
+.records-table td:nth-child(6) {
+  min-width: 100px;
+}
+
+.records-table th:nth-child(7),
+.records-table td:nth-child(7) {
+  min-width: 70px;
+  white-space: nowrap;
+}
+
+.records-table th:nth-child(8),
+.records-table td:nth-child(8) {
+  min-width: 95px;
+  white-space: nowrap;
+}
+
+.records-table th:nth-child(9),
+.records-table td:nth-child(9) {
+  min-width: 210px;
+  max-width: 260px;
   overflow-wrap: anywhere;
+}
+
+.records-table th:nth-child(10),
+.records-table td:nth-child(10) {
+  min-width: 175px;
+  white-space: nowrap;
+}
+
+.records-table th:nth-child(11),
+.records-table td:nth-child(11) {
+  min-width: 115px;
+  white-space: nowrap;
+}
+
+.records-table th:nth-child(12),
+.records-table td:nth-child(12) {
+  min-width: 84px;
+  white-space: nowrap;
 }
 
 .table-button {
