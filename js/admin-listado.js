@@ -51,6 +51,12 @@ function formatDate(value) {
   return `${day}/${month}/${year}`;
 }
 
+function renderStatus(status) {
+  const normalized = String(status || "").toLowerCase();
+  const label = normalized === "activo" ? "Activo" : "Inactivo";
+  return `<span class="status-pill ${normalized === "activo" ? "is-active" : "is-inactive"}">${label}</span>`;
+}
+
 function renderRecords() {
   recordsBody.innerHTML = "";
   records.forEach((record) => {
@@ -75,14 +81,38 @@ function renderRecords() {
       row.appendChild(cell);
     });
 
+    const statusCell = document.createElement("td");
+    statusCell.innerHTML = renderStatus(record.validity_status);
+    row.appendChild(statusCell);
+
     const actionCell = document.createElement("td");
-    const button = document.createElement("button");
-    button.className = "table-button";
-    button.type = "button";
-    button.textContent = "PDF";
-    button.addEventListener("click", () => confirmAndDownloadPdf(record));
-    actionCell.appendChild(button);
+    const pdfButton = document.createElement("button");
+    pdfButton.className = "table-button";
+    pdfButton.type = "button";
+    pdfButton.textContent = "PDF";
+    pdfButton.addEventListener("click", () => confirmAndDownloadPdf(record));
+    actionCell.appendChild(pdfButton);
     row.appendChild(actionCell);
+
+    const editCell = document.createElement("td");
+    const editButton = document.createElement("button");
+    editButton.className = "table-button table-button-light";
+    editButton.type = "button";
+    editButton.textContent = "Editar";
+    editButton.addEventListener("click", () => {
+      window.location.href = `alta.html?folio=${encodeURIComponent(record.folio)}`;
+    });
+    editCell.appendChild(editButton);
+    row.appendChild(editCell);
+
+    const deleteCell = document.createElement("td");
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "table-button table-button-danger";
+    deleteButton.type = "button";
+    deleteButton.textContent = "Eliminar";
+    deleteButton.addEventListener("click", () => confirmAndDeleteRecord(record));
+    deleteCell.appendChild(deleteButton);
+    row.appendChild(deleteCell);
 
     recordsBody.appendChild(row);
   });
@@ -135,6 +165,51 @@ function showModal({ title, body, confirmText = "Aceptar", cancelText = "Cancela
     root.querySelector("[data-modal-confirm]").addEventListener("click", () => close(true));
     root.querySelector("[data-modal-cancel]")?.addEventListener("click", () => close(false));
   });
+}
+
+async function confirmAndDeleteRecord(record) {
+  const confirmed = await showModal({
+    title: "Eliminar registro",
+    body: `
+      <p>Confirma que deseas eliminar este registro del listado.</p>
+      <dl class="modal-summary">
+        <dt>Folio</dt><dd>${escapeHtml(record.folio)}</dd>
+        <dt>Marca</dt><dd>${escapeHtml(record.brand)}</dd>
+        <dt>Propietario</dt><dd>${escapeHtml(record.owner_name)}</dd>
+      </dl>
+    `,
+    confirmText: "Eliminar",
+    cancelText: "Cancelar",
+  });
+
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(`${apiBase}/api/vehicles/${record.folio}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "No fue posible eliminar el registro.");
+    }
+
+    await showModal({
+      title: "Registro eliminado",
+      body: `<p>El folio <strong>${escapeHtml(record.folio)}</strong> fue eliminado del listado.</p>`,
+      confirmText: "Aceptar",
+      showCancel: false,
+    });
+    loadRecords();
+  } catch (error) {
+    await showModal({
+      title: "No fue posible eliminar",
+      body: `<p>${escapeHtml(error.message)}</p>`,
+      confirmText: "Aceptar",
+      showCancel: false,
+    });
+  }
 }
 
 async function confirmAndDownloadPdf(record) {

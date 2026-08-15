@@ -24,7 +24,7 @@
       </section>
       <div>
         <p>Modulo interno</p>
-        <h1>Alta de informacion vehicular</h1>
+        <h1 id="admin-page-title">Alta de informacion vehicular</h1>
         <nav class="admin-nav" aria-label="Navegacion interna">
           <a class="active" href="alta.html">Alta de auto</a>
           <a href="listado.html">Listado</a>
@@ -35,8 +35,8 @@
     <main class="admin-main">
       <section class="admin-panel">
         <div class="panel-title">
-          <span>Registro</span>
-          <p>Captura los datos que apareceran en la consulta del folio.</p>
+          <span id="form-mode-label">Registro</span>
+          <p id="form-mode-description">Captura los datos que apareceran en la consulta del folio.</p>
         </div>
 
         <form id="vehicle-form" class="vehicle-form">
@@ -91,7 +91,7 @@
 
           <div class="actions">
             <button class="secondary-button" type="reset">Limpiar</button>
-            <button class="primary-button" type="submit">Guardar alta</button>
+            <button id="save-button" class="primary-button" type="submit">Guardar alta</button>
           </div>
 
           <p id="save-message" class="save-message" aria-live="polite"></p>

@@ -51,11 +51,13 @@ function showResultLayout() {
 }
 
 function renderValidResult(vehicle) {
-  const expired = isExpired(vehicle.expiration_date);
-  const statusText = expired ? "VENCIDO" : "VIGENTE";
+  const inactive = vehicle.validity_status
+    ? vehicle.validity_status !== "activo"
+    : isExpired(vehicle.expiration_date);
+  const statusText = inactive ? "INACTIVO" : "ACTIVO";
 
   resultContent.innerHTML = `
-    <div class="digital-status ${expired ? "is-expired" : "is-active"}">
+    <div class="digital-status ${inactive ? "is-expired" : "is-active"}">
       FOLIO ${escapeHtml(vehicle.folio)} : ${statusText}
     </div>
 

@@ -1,6 +1,10 @@
 const form = document.querySelector("#vehicle-form");
 const message = document.querySelector("#save-message");
 const previewNodes = document.querySelectorAll("[data-preview]");
+const pageTitle = document.querySelector("#admin-page-title");
+const formModeLabel = document.querySelector("#form-mode-label");
+const formModeDescription = document.querySelector("#form-mode-description");
+const saveButton = document.querySelector("#save-button");
 const userNameNode = document.querySelector("[data-user-name]");
 const userInitialNode = document.querySelector("[data-user-initial]");
 const brandSelect = form.elements.marca;
@@ -11,6 +15,7 @@ const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) &&
   ? "http://localhost:4000"
   : "";
 const token = sessionStorage.getItem("adminToken");
+const editFolio = new URLSearchParams(window.location.search).get("folio");
 const vehicleBrands = [
   "ABARTH",
   "ACURA",
@@ -110,8 +115,12 @@ function populateBrands() {
 
 function formatDate(value) {
   if (!value) return "--/--/----";
-  const [year, month, day] = value.split("-");
+  const [year, month, day] = value.split("T")[0].split("-");
   return `${day}/${month}/${year}`;
+}
+
+function toInputDate(value) {
+  return value ? String(value).split("T")[0] : "";
 }
 
 function getNextDate(value) {
@@ -242,6 +251,62 @@ function updatePreview() {
   });
 }
 
+function ensureBrandOption(brand) {
+  if (!brand || [...brandSelect.options].some((option) => option.value === brand)) return;
+  const option = document.createElement("option");
+  option.value = brand;
+  option.textContent = brand;
+  brandSelect.appendChild(option);
+}
+
+function fillForm(vehicle) {
+  ensureBrandOption(vehicle.brand);
+  form.elements.fechaExpedicion.value = toInputDate(vehicle.issue_date);
+  form.elements.fechaVencimiento.value = toInputDate(vehicle.expiration_date);
+  form.elements.marca.value = vehicle.brand || "";
+  form.elements.linea.value = vehicle.line || "";
+  form.elements.anio.value = vehicle.model_year || "";
+  form.elements.color.value = vehicle.color || "";
+  form.elements.propietario.value = vehicle.owner_name || "";
+  form.elements.numeroSerie.value = vehicle.serial_number || "";
+  form.elements.numeroMotor.value = vehicle.engine_number || "";
+  syncExpirationMin();
+  updatePreview();
+}
+
+async function loadVehicleForEdit() {
+  if (!editFolio) return;
+
+  pageTitle.textContent = `Editar folio ${editFolio}`;
+  formModeLabel.textContent = "Edicion";
+  formModeDescription.textContent = "Actualiza los datos del folio seleccionado.";
+  saveButton.textContent = "Guardar cambios";
+  message.textContent = "Cargando datos del folio...";
+
+  try {
+    const response = await fetch(`${apiBase}/api/vehicles/${editFolio}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "No fue posible cargar el folio.");
+    }
+
+    fillForm(result.vehicle);
+    message.textContent = `Editando folio ${editFolio}.`;
+  } catch (error) {
+    message.textContent = error.message;
+    await showModal({
+      title: "No fue posible cargar",
+      body: `<p>${escapeHtml(error.message)}</p>`,
+      confirmText: "Volver al listado",
+      showCancel: false,
+    });
+    window.location.href = "listado.html";
+  }
+}
+
 form.addEventListener("input", updatePreview);
 issueDateInput.addEventListener("change", () => {
   syncExpirationMin();
@@ -275,9 +340,9 @@ form.addEventListener("submit", async (event) => {
   }
 
   const confirmed = await showModal({
-    title: "Confirmar alta",
-    body: `<p>Confirma que deseas guardar esta alta vehicular.</p>${buildConfirmSummary(record)}`,
-    confirmText: "Guardar alta",
+    title: editFolio ? "Confirmar cambios" : "Confirmar alta",
+    body: `<p>Confirma que deseas ${editFolio ? "actualizar este folio" : "guardar esta alta vehicular"}.</p>${buildConfirmSummary(record)}`,
+    confirmText: editFolio ? "Guardar cambios" : "Guardar alta",
     cancelText: "Cancelar",
   });
 
@@ -287,9 +352,9 @@ form.addEventListener("submit", async (event) => {
   }
 
   try {
-    message.textContent = "Guardando alta...";
-    const response = await fetch(`${apiBase}/api/vehicles`, {
-      method: "POST",
+    message.textContent = editFolio ? "Guardando cambios..." : "Guardando alta...";
+    const response = await fetch(`${apiBase}/api/vehicles${editFolio ? `/${editFolio}` : ""}`, {
+      method: editFolio ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -302,14 +367,22 @@ form.addEventListener("submit", async (event) => {
       throw new Error(result.message || "No fue posible guardar el alta.");
     }
 
-    message.textContent = `Alta guardada. Folio generado: ${result.vehicle.folio}.`;
+    message.textContent = editFolio
+      ? `Cambios guardados para el folio ${result.vehicle.folio}.`
+      : `Alta guardada. Folio generado: ${result.vehicle.folio}.`;
     await showModal({
-      title: "Alta guardada",
-      body: `<p>El folio generado es <strong>${escapeHtml(result.vehicle.folio)}</strong>.</p>`,
+      title: editFolio ? "Cambios guardados" : "Alta guardada",
+      body: editFolio
+        ? `<p>El folio <strong>${escapeHtml(result.vehicle.folio)}</strong> fue actualizado.</p>`
+        : `<p>El folio generado es <strong>${escapeHtml(result.vehicle.folio)}</strong>.</p>`,
       confirmText: "Aceptar",
       showCancel: false,
     });
-    form.reset();
+    if (editFolio) {
+      window.location.href = "listado.html";
+    } else {
+      form.reset();
+    }
   } catch (error) {
     message.textContent = error.message;
   }
@@ -318,3 +391,4 @@ form.addEventListener("submit", async (event) => {
 populateBrands();
 syncExpirationMin();
 updatePreview();
+loadVehicleForEdit();

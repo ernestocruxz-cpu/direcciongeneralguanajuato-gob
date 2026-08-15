@@ -23,7 +23,7 @@ export async function listVehicleRecords({ page = 1, pageSize = 10, search = "",
   const safePageSize = allowedPageSizes.includes(Number(pageSize)) ? Number(pageSize) : 10;
   const offset = (safePage - 1) * safePageSize;
   const params = [];
-  const where = [];
+  const where = ["status = 'activo'"];
 
   if (search) {
     params.push(`%${String(search).trim().toLowerCase()}%`);
@@ -50,7 +50,8 @@ export async function listVehicleRecords({ page = 1, pageSize = 10, search = "",
   const resultParams = [...params, safePageSize, offset];
   const result = await query(
     `select id, folio, issue_date, expiration_date, brand, line, model_year,
-            color, owner_name, serial_number, engine_number, qr_payload, created_at
+            color, owner_name, serial_number, engine_number, qr_payload, created_at,
+            case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status
      from vehicles
      ${whereSql}
      order by created_at desc
@@ -72,10 +73,58 @@ export async function listVehicleRecords({ page = 1, pageSize = 10, search = "",
 export async function getVehicleByFolio(folio) {
   const result = await query(
     `select folio, issue_date, expiration_date, brand, line, model_year,
-            color, owner_name, serial_number, engine_number, qr_payload, qr_data_url
+            color, owner_name, serial_number, engine_number, qr_payload, qr_data_url,
+            created_at,
+            case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status
      from vehicles
      where folio = $1 and status = 'activo'
      limit 1`,
+    [folio]
+  );
+
+  return result.rows[0] || null;
+}
+
+export async function updateVehicleRecord(folio, data) {
+  const result = await query(
+    `update vehicles
+     set issue_date = $2,
+         expiration_date = $3,
+         brand = $4,
+         line = $5,
+         model_year = $6,
+         color = $7,
+         owner_name = $8,
+         serial_number = $9,
+         engine_number = $10
+     where folio = $1 and status = 'activo'
+     returning id, folio, issue_date, expiration_date, brand, line, model_year,
+               color, owner_name, serial_number, engine_number, qr_payload, qr_data_url,
+               created_at,
+               case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status`,
+    [
+      folio,
+      data.issueDate,
+      data.expirationDate,
+      data.brand.toUpperCase(),
+      data.line.toUpperCase(),
+      data.modelYear,
+      data.color.toUpperCase(),
+      data.ownerName.toUpperCase(),
+      data.serialNumber.toUpperCase(),
+      data.engineNumber.toUpperCase(),
+    ]
+  );
+
+  return result.rows[0] || null;
+}
+
+export async function cancelVehicleRecord(folio) {
+  const result = await query(
+    `update vehicles
+     set status = 'cancelado'
+     where folio = $1 and status = 'activo'
+     returning folio`,
     [folio]
   );
 
@@ -94,7 +143,8 @@ export async function createVehicleRecord(data, createdBy) {
      )
      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
      returning id, folio, issue_date, expiration_date, brand, line, model_year,
-               color, owner_name, serial_number, engine_number, qr_payload, qr_data_url, created_at`,
+               color, owner_name, serial_number, engine_number, qr_payload, qr_data_url, created_at,
+               case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status`,
     [
       folio,
       data.issueDate,

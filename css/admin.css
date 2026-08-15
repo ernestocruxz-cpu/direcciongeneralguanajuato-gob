@@ -444,7 +444,7 @@
 
 .records-table {
   width: 100%;
-  min-width: 1390px;
+  min-width: 1660px;
   border-collapse: collapse;
   color: #003767;
   font-size: 15px;
@@ -529,8 +529,39 @@
 
 .records-table th:nth-child(12),
 .records-table td:nth-child(12) {
-  min-width: 84px;
+  min-width: 105px;
   white-space: nowrap;
+}
+
+.records-table th:nth-child(13),
+.records-table td:nth-child(13),
+.records-table th:nth-child(14),
+.records-table td:nth-child(14),
+.records-table th:nth-child(15),
+.records-table td:nth-child(15) {
+  min-width: 92px;
+  white-space: nowrap;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  border-radius: 999px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.status-pill.is-active {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.status-pill.is-inactive {
+  color: #991b1b;
+  background: #fee2e2;
 }
 
 .table-button {
@@ -547,6 +578,23 @@
 
 .table-button:hover {
   background: #003f72;
+}
+
+.table-button-light {
+  background: #eaf6ff;
+  color: #005395;
+}
+
+.table-button-light:hover {
+  background: #cfeaff;
+}
+
+.table-button-danger {
+  background: #b91c1c;
+}
+
+.table-button-danger:hover {
+  background: #991b1b;
 }
 
 .empty-state {
