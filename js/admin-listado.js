@@ -8,6 +8,7 @@ const clearSearch = document.querySelector("#clear-search");
 const prevPageButton = document.querySelector("#prev-page");
 const nextPageButton = document.querySelector("#next-page");
 const pageStatus = document.querySelector("#page-status");
+const logoutButton = document.querySelector("[data-logout]");
 const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "4000"
   ? "http://localhost:4000"
   : "";
@@ -25,6 +26,12 @@ let searchTimer = null;
 if (!token) {
   window.location.href = "login.html";
 }
+
+logoutButton?.addEventListener("click", () => {
+  sessionStorage.removeItem("adminToken");
+  sessionStorage.removeItem("adminUser");
+  window.location.href = "login.html";
+});
 
 function formatDate(value) {
   if (!value) return "--/--/----";

@@ -40,7 +40,8 @@
   margin-top: 12px;
 }
 
-.admin-nav a {
+.admin-nav a,
+.logout-button {
   display: inline-flex;
   align-items: center;
   min-height: 36px;
@@ -53,11 +54,23 @@
   font-weight: 700;
 }
 
+.logout-button {
+  cursor: pointer;
+  font-family: inherit;
+  color: #7f1d1d;
+}
+
 .admin-nav a.active,
 .admin-nav a:hover {
   color: #ffffff;
   background: #005395;
   border-color: #005395;
+}
+
+.logout-button:hover {
+  color: #ffffff;
+  background: #9f1239;
+  border-color: #9f1239;
 }
 
 .admin-main {

@@ -4,6 +4,7 @@ const previewNodes = document.querySelectorAll("[data-preview]");
 const brandSelect = form.elements.marca;
 const issueDateInput = form.elements.fechaExpedicion;
 const expirationDateInput = form.elements.fechaVencimiento;
+const logoutButton = document.querySelector("[data-logout]");
 const apiBase = ["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "4000"
   ? "http://localhost:4000"
   : "";
@@ -79,6 +80,12 @@ const vehicleBrands = [
 if (!token) {
   window.location.href = "login.html";
 }
+
+logoutButton?.addEventListener("click", () => {
+  sessionStorage.removeItem("adminToken");
+  sessionStorage.removeItem("adminUser");
+  window.location.href = "login.html";
+});
 
 function populateBrands() {
   vehicleBrands.forEach((brand) => {
