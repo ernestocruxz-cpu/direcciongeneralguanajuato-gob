@@ -226,7 +226,7 @@ async function confirmAndDownloadPdf(record) {
       <dl class="modal-summary">
         <dt>Folio</dt><dd>${escapeHtml(record.folio)}</dd>
         <dt>Marca</dt><dd>${escapeHtml(record.brand)}</dd>
-        <dt>Linea</dt><dd>${escapeHtml(record.line)}</dd>
+        <dt>Modelo</dt><dd>${escapeHtml(record.line)}</dd>
         <dt>Serie</dt><dd>${escapeHtml(record.serial_number)}</dd>
       </dl>
     `,

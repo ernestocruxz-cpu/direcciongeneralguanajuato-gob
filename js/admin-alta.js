@@ -233,8 +233,8 @@ function buildConfirmSummary(record) {
       <dt>Expedicion</dt><dd>${escapeHtml(formatDate(record.fechaExpedicion))}</dd>
       <dt>Vencimiento</dt><dd>${escapeHtml(formatDate(record.fechaVencimiento))}</dd>
       <dt>Marca</dt><dd>${escapeHtml(record.marca)}</dd>
-      <dt>Linea</dt><dd>${escapeHtml(record.linea)}</dd>
-      <dt>Ano</dt><dd>${escapeHtml(record.anio)}</dd>
+      <dt>Modelo</dt><dd>${escapeHtml(record.linea)}</dd>
+      <dt>Año</dt><dd>${escapeHtml(record.anio)}</dd>
       <dt>Serie</dt><dd>${escapeHtml(record.numeroSerie)}</dd>
       <dt>Propietario</dt><dd>${escapeHtml(record.propietario)}</dd>
     </dl>
