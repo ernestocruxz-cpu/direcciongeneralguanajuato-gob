@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const assetsDir = path.resolve(__dirname, "../../assets");
 const policePath = path.join(assetsDir, "police.png");
-const sspegPath = path.join(assetsDir, "sspeg.png");
+const gobiernoPath = path.join(assetsDir, "logo-gobierno.png");
 const movilidadIconPath = path.join(assetsDir, "movilidad-icon-clean.png");
 const movilidadTextPath = path.join(assetsDir, "movilidad-text-clean.png");
 const congresoPath = path.join(assetsDir, "congreso-guanajuato.png");
@@ -92,7 +92,7 @@ export async function buildPermitPdf(vehicle) {
     fitText(doc, "TARJETA DE CIRCULACION Y", center - 110, y + 46, { width: 220, align: "center", height: 14 });
     fitText(doc, "ENGOMADO", center - 110, y + 62, { width: 220, align: "center", height: 14 });
 
-    doc.image(sspegPath, right - 150, y + 13, { width: 129, height: 66 });
+    doc.image(gobiernoPath, right - 152, y + 23, { width: 134 });
 
     const qrBuffer = dataUrlToBuffer(vehicle.qr_data_url);
     if (qrBuffer) {
