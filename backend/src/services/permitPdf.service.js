@@ -10,7 +10,6 @@ const policePath = path.join(assetsDir, "police.png");
 const sspegPath = path.join(assetsDir, "sspeg.png");
 const movilidadIconPath = path.join(assetsDir, "movilidad-icon-clean.png");
 const movilidadTextPath = path.join(assetsDir, "movilidad-text-clean.png");
-const congresoPath = path.join(assetsDir, "congreso-guanajuato.png");
 
 function formatDate(value) {
   if (!value) return "";
@@ -169,19 +168,19 @@ export async function buildPermitPdf(vehicle) {
       { width: 310, height: 12 }
     );
 
-    if (fs.existsSync(congresoPath)) {
-      const congresoX = right - 109;
-      const congresoY = y + 276;
-      const congresoW = 72;
-      const congresoH = 39;
+    if (fs.existsSync(sspegPath)) {
+      const signatureLogoX = right - 115;
+      const signatureLogoY = y + 274;
+      const signatureLogoW = 84;
+      const signatureLogoH = 43;
       doc.save();
       doc.rotate(15, {
-        origin: [congresoX + congresoW / 2, congresoY + congresoH / 2],
+        origin: [signatureLogoX + signatureLogoW / 2, signatureLogoY + signatureLogoH / 2],
       });
-      doc.image(congresoPath, congresoX, congresoY, {
-        width: congresoW,
-        height: congresoH,
-        fit: [congresoW, congresoH],
+      doc.image(sspegPath, signatureLogoX, signatureLogoY, {
+        width: signatureLogoW,
+        height: signatureLogoH,
+        fit: [signatureLogoW, signatureLogoH],
       });
       doc.restore();
     }
