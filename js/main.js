@@ -126,6 +126,23 @@ async function loadDigitalResult(folio) {
   }
 }
 
+function getFolioFromUrl() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
+  const candidates = [
+    searchParams.get("folio"),
+    searchParams.get("Folio"),
+    searchParams.get("FOLIO"),
+    hashParams.get("folio"),
+    hashParams.get("Folio"),
+    hashParams.get("FOLIO"),
+    pathParts[pathParts.length - 1],
+  ];
+
+  return candidates.find((value) => /^\d{6}$/.test(String(value || "").trim())) || "";
+}
+
 if (menuButton && mainMenu) {
   menuButton.addEventListener("click", () => {
     const isOpen = mainMenu.classList.toggle("open");
@@ -148,8 +165,7 @@ if (form) {
   });
 }
 
-const params = new URLSearchParams(window.location.search);
-const folioFromUrl = params.get("folio");
+const folioFromUrl = getFolioFromUrl();
 
 if (folioFromUrl) {
   loadDigitalResult(folioFromUrl.trim());

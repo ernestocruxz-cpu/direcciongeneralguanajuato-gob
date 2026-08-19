@@ -11,6 +11,12 @@ function isDuplicateFolioError(error) {
   return error?.code === "23505" && String(error?.constraint || "").includes("vehicles_folio");
 }
 
+function buildQrPayload(folio) {
+  const url = new URL(env.publicAppUrl);
+  url.searchParams.set("folio", folio);
+  return url.toString();
+}
+
 export async function listVehicleRecords({
   page = 1,
   pageSize = 10,
@@ -141,7 +147,7 @@ export async function cancelVehicleRecord(folio) {
 export async function createVehicleRecord(data, createdBy) {
   for (let attempt = 0; attempt < 100; attempt += 1) {
     const folio = generateFolioCandidate();
-    const qrPayload = `${env.publicAppUrl}/?folio=${folio}`;
+    const qrPayload = buildQrPayload(folio);
     const qrDataUrl = await QRCode.toDataURL(qrPayload, { margin: 1, width: 220 });
 
     try {
