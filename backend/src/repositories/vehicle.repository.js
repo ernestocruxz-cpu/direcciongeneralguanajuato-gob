@@ -1,20 +1,14 @@
 import QRCode from "qrcode";
+import { randomInt } from "node:crypto";
 import { query } from "../config/db.js";
 import { env } from "../config/env.js";
 
-async function generateUniqueFolio() {
-  for (let attempt = 0; attempt < 50; attempt += 1) {
-    const result = await query(
-      `insert into vehicle_folio_sequence default values
-       returning lpad(id::text, 6, '0') as folio`
-    );
-    const folio = result.rows[0].folio;
-    const exists = await query("select 1 from vehicles where folio = $1 limit 1", [folio]);
+function generateFolioCandidate() {
+  return String(randomInt(0, 1_000_000)).padStart(6, "0");
+}
 
-    if (exists.rowCount === 0) return folio;
-  }
-
-  throw { status: 500, message: "No fue posible generar un folio unico." };
+function isDuplicateFolioError(error) {
+  return error?.code === "23505" && String(error?.constraint || "").includes("vehicles_folio");
 }
 
 export async function listVehicleRecords({
@@ -145,35 +139,44 @@ export async function cancelVehicleRecord(folio) {
 }
 
 export async function createVehicleRecord(data, createdBy) {
-  const folio = await generateUniqueFolio();
-  const qrPayload = `${env.publicAppUrl}/?folio=${folio}`;
-  const qrDataUrl = await QRCode.toDataURL(qrPayload, { margin: 1, width: 220 });
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const folio = generateFolioCandidate();
+    const qrPayload = `${env.publicAppUrl}/?folio=${folio}`;
+    const qrDataUrl = await QRCode.toDataURL(qrPayload, { margin: 1, width: 220 });
 
-  const result = await query(
-    `insert into vehicles (
-       folio, issue_date, expiration_date, brand, line, model_year,
-       color, owner_name, serial_number, engine_number, qr_payload, qr_data_url, created_by
-     )
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-     returning id, folio, issue_date, expiration_date, brand, line, model_year,
-               color, owner_name, serial_number, engine_number, qr_payload, qr_data_url, created_at,
-               case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status`,
-    [
-      folio,
-      data.issueDate,
-      data.expirationDate,
-      data.brand.toUpperCase(),
-      data.line.toUpperCase(),
-      data.modelYear,
-      data.color.toUpperCase(),
-      data.ownerName.toUpperCase(),
-      data.serialNumber.toUpperCase(),
-      data.engineNumber.toUpperCase(),
-      qrPayload,
-      qrDataUrl,
-      createdBy,
-    ]
-  );
+    try {
+      const result = await query(
+        `insert into vehicles (
+           folio, issue_date, expiration_date, brand, line, model_year,
+           color, owner_name, serial_number, engine_number, qr_payload, qr_data_url, created_by
+         )
+         values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+         returning id, folio, issue_date, expiration_date, brand, line, model_year,
+                   color, owner_name, serial_number, engine_number, qr_payload, qr_data_url, created_at,
+                   case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status`,
+        [
+          folio,
+          data.issueDate,
+          data.expirationDate,
+          data.brand.toUpperCase(),
+          data.line.toUpperCase(),
+          data.modelYear,
+          data.color.toUpperCase(),
+          data.ownerName.toUpperCase(),
+          data.serialNumber.toUpperCase(),
+          data.engineNumber.toUpperCase(),
+          qrPayload,
+          qrDataUrl,
+          createdBy,
+        ]
+      );
 
-  return result.rows[0];
+      return result.rows[0];
+    } catch (error) {
+      if (isDuplicateFolioError(error)) continue;
+      throw error;
+    }
+  }
+
+  throw { status: 500, message: "No fue posible generar un folio unico." };
 }
