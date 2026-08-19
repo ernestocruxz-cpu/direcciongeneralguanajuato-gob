@@ -1,7 +1,9 @@
 import PDFDocument from "pdfkit";
+import QRCode from "qrcode";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { env } from "../config/env.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,7 +44,15 @@ function labelValue(doc, label, value, x, y, labelWidth = 38, valueWidth = 120) 
   fitText(doc, value, x + labelWidth, y, { width: valueWidth, height: 9 });
 }
 
+function buildQrPayload(folio) {
+  const url = new URL(env.publicAppUrl);
+  url.searchParams.set("folio", folio);
+  return url.toString();
+}
+
 export async function buildPermitPdf(vehicle) {
+  const currentQrDataUrl = await QRCode.toDataURL(buildQrPayload(vehicle.folio), { margin: 1, width: 220 });
+
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: "LETTER",
@@ -94,7 +104,7 @@ export async function buildPermitPdf(vehicle) {
 
     doc.image(gobiernoPath, right - 152, y + 23, { width: 134 });
 
-    const qrBuffer = dataUrlToBuffer(vehicle.qr_data_url);
+    const qrBuffer = dataUrlToBuffer(currentQrDataUrl || vehicle.qr_data_url);
     if (qrBuffer) {
       doc.image(qrBuffer, x + 72, y + 50, { width: 65, height: 65 });
     }
