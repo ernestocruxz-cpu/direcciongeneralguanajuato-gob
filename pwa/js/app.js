@@ -175,9 +175,18 @@ function renderShell(content) {
         </div>
       </div>
       <nav class="tabs" aria-label="Navegacion PWA">
-        <button class="${view === "alta" ? "active" : ""}" type="button" data-view="alta">Alta</button>
-        <button class="${view === "activos" ? "active" : ""}" type="button" data-view="activos">Activos</button>
-        <button class="${view === "inactivos" ? "active" : ""}" type="button" data-view="inactivos">Inactivos</button>
+        <button class="${view === "alta" ? "active" : ""}" type="button" data-view="alta">
+          <span class="ios-symbol symbol-plus" aria-hidden="true"></span>
+          <span>Alta</span>
+        </button>
+        <button class="${view === "activos" ? "active" : ""}" type="button" data-view="activos">
+          <span class="ios-symbol symbol-check" aria-hidden="true"></span>
+          <span>Activos</span>
+        </button>
+        <button class="${view === "inactivos" ? "active" : ""}" type="button" data-view="inactivos">
+          <span class="ios-symbol symbol-clock" aria-hidden="true"></span>
+          <span>Inactivos</span>
+        </button>
       </nav>
     </header>
     <section class="view">${content}</section>
@@ -240,8 +249,14 @@ function vehicleFormTemplate(vehicle = {}) {
           <input name="engineNumber" type="text" maxlength="40" value="${escapeHtml(vehicle.engine_number || "")}" required />
         </label>
         <div class="actions">
-          <button class="secondary" type="reset">Limpiar</button>
-          <button class="primary" type="submit">${editingFolio ? "Guardar" : "Crear alta"}</button>
+          <button class="secondary" type="reset">
+            <span class="ios-symbol symbol-reset" aria-hidden="true"></span>
+            <span>Limpiar</span>
+          </button>
+          <button class="primary" type="submit">
+            <span class="ios-symbol symbol-save" aria-hidden="true"></span>
+            <span>${editingFolio ? "Guardar" : "Crear alta"}</span>
+          </button>
         </div>
       </form>
       <p class="message" id="form-message" aria-live="polite"></p>
@@ -393,9 +408,18 @@ function renderCards() {
         <dt>Propietario</dt><dd>${escapeHtml(record.owner_name)}</dd>
       </dl>
       <div class="card-actions">
-        <button class="primary" type="button" data-pdf="${escapeHtml(record.folio)}">PDF</button>
-        <button class="secondary" type="button" data-edit="${escapeHtml(record.folio)}">Editar</button>
-        <button class="danger" type="button" data-delete="${escapeHtml(record.folio)}">Eliminar</button>
+        <button class="primary icon-button" type="button" data-pdf="${escapeHtml(record.folio)}" aria-label="Abrir PDF">
+          <span class="ios-symbol symbol-doc" aria-hidden="true"></span>
+          <span>PDF</span>
+        </button>
+        <button class="secondary icon-button" type="button" data-edit="${escapeHtml(record.folio)}" aria-label="Editar">
+          <span class="ios-symbol symbol-edit" aria-hidden="true"></span>
+          <span>Editar</span>
+        </button>
+        <button class="danger icon-button" type="button" data-delete="${escapeHtml(record.folio)}" aria-label="Eliminar">
+          <span class="ios-symbol symbol-trash" aria-hidden="true"></span>
+          <span>Eliminar</span>
+        </button>
       </div>
     </article>
   `).join("");
