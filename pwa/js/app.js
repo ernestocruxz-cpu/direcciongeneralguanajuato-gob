@@ -240,7 +240,7 @@ function vehicleFormTemplate(vehicle = {}) {
         <label class="field">Modelo
           <input name="line" type="text" maxlength="80" value="${escapeHtml(vehicle.line || "")}" required />
         </label>
-        <label class="field">Ano
+        <label class="field">Año
           <input name="modelYear" type="text" inputmode="numeric" maxlength="4" value="${escapeHtml(vehicle.model_year || "")}" required />
         </label>
         <label class="field">Color
@@ -288,7 +288,7 @@ function getVehiclePayload(form) {
 
 function validatePayload(payload) {
   if (payload.expirationDate <= payload.issueDate) return "La fecha de vencimiento debe ser posterior a la expedicion.";
-  if (!/^\d{4}$/.test(payload.modelYear)) return "El ano debe tener 4 digitos.";
+  if (!/^\d{4}$/.test(payload.modelYear)) return "El año debe tener 4 digitos.";
   if (payload.serialNumber.length > 17) return "El numero de serie no debe superar 17 caracteres.";
   return "";
 }
@@ -409,7 +409,7 @@ function renderCards() {
         <dt>Registro</dt><dd>${escapeHtml(formatDate(record.created_at))}</dd>
         <dt>Marca</dt><dd>${escapeHtml(record.brand)}</dd>
         <dt>Modelo</dt><dd>${escapeHtml(record.line)}</dd>
-        <dt>Ano</dt><dd>${escapeHtml(record.model_year)}</dd>
+        <dt>Año</dt><dd>${escapeHtml(record.model_year)}</dd>
         <dt>Vence</dt><dd>${escapeHtml(formatDate(record.expiration_date))}</dd>
         <dt>Serie</dt><dd>${escapeHtml(record.serial_number)}</dd>
         <dt>Propietario</dt><dd>${escapeHtml(record.owner_name)}</dd>

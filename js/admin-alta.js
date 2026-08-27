@@ -208,7 +208,7 @@ function validateRecord(record) {
   }
 
   if (!/^\d{4}$/.test(record.anio)) {
-    return "El ano debe tener exactamente 4 digitos.";
+    return "El año debe tener exactamente 4 digitos.";
   }
 
   if (record.numeroSerie.length > 17) {
