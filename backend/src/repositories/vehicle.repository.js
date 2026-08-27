@@ -17,6 +17,8 @@ function buildQrPayload(folio) {
   return url.toString();
 }
 
+const validityStatusSql = "case when current_date > expiration_date then 'inactivo' else 'activo' end";
+
 export async function listVehicleRecords({
   page = 1,
   pageSize = 10,
@@ -33,9 +35,9 @@ export async function listVehicleRecords({
   const normalizedValidityStatus = String(validityStatus).toLowerCase() === "inactivo" ? "inactivo" : "activo";
 
   if (normalizedValidityStatus === "activo") {
-    where.push("expiration_date >= current_date");
+    where.push("current_date <= expiration_date");
   } else {
-    where.push("expiration_date < current_date");
+    where.push("current_date > expiration_date");
   }
 
   if (search) {
@@ -64,7 +66,7 @@ export async function listVehicleRecords({
   const result = await query(
     `select id, folio, issue_date, expiration_date, brand, line, model_year,
             color, owner_name, serial_number, engine_number, qr_payload, created_at,
-            case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status
+            ${validityStatusSql} as validity_status
      from vehicles
      ${whereSql}
      order by created_at desc
@@ -88,7 +90,7 @@ export async function getVehicleByFolio(folio) {
     `select folio, issue_date, expiration_date, brand, line, model_year,
             color, owner_name, serial_number, engine_number, qr_payload, qr_data_url,
             created_at,
-            case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status
+            ${validityStatusSql} as validity_status
      from vehicles
      where folio = $1 and status = 'activo'
      limit 1`,
@@ -114,7 +116,7 @@ export async function updateVehicleRecord(folio, data) {
      returning id, folio, issue_date, expiration_date, brand, line, model_year,
                color, owner_name, serial_number, engine_number, qr_payload, qr_data_url,
                created_at,
-               case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status`,
+               ${validityStatusSql} as validity_status`,
     [
       folio,
       data.issueDate,
@@ -159,7 +161,7 @@ export async function createVehicleRecord(data, createdBy) {
          values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
          returning id, folio, issue_date, expiration_date, brand, line, model_year,
                    color, owner_name, serial_number, engine_number, qr_payload, qr_data_url, created_at,
-                   case when expiration_date >= current_date then 'activo' else 'inactivo' end as validity_status`,
+                   ${validityStatusSql} as validity_status`,
         [
           folio,
           data.issueDate,
