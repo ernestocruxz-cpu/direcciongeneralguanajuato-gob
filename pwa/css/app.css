@@ -1,5 +1,6 @@
 :root {
   --blue: #007aff;
+  --blue-soft: #e8f3ff;
   --blue-dark: #003767;
   --soft-blue: #eaf6ff;
   --line: #c8dff1;
@@ -19,8 +20,9 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--text);
-  background: #f2f6fb;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef5fb 100%);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 button,
@@ -35,14 +37,14 @@ button {
 
 .app-shell {
   min-height: 100vh;
-  padding: env(safe-area-inset-top) 0 calc(86px + env(safe-area-inset-bottom));
+  padding: env(safe-area-inset-top) 0 calc(92px + env(safe-area-inset-bottom));
 }
 
 .login-screen {
   display: grid;
   min-height: 100vh;
   place-items: center;
-  padding: 18px;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
 }
 
 .login-card,
@@ -56,15 +58,107 @@ button {
 }
 
 .login-card {
-  width: min(100%, 430px);
-  padding: 28px 22px 24px;
+  width: min(100%, 390px);
+  padding: 24px 20px 22px;
 }
 
-.brand-logo {
-  display: block;
-  width: 220px;
-  max-width: 100%;
-  margin: 0 0 22px;
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.app-mark {
+  position: relative;
+  display: inline-grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 18px;
+  color: #ffffff;
+  background: linear-gradient(160deg, #0a84ff, #38bdf8 58%, #34c759);
+  box-shadow: 0 12px 28px rgba(0, 122, 255, 0.26);
+}
+
+.app-mark::before {
+  position: absolute;
+  top: 23px;
+  left: 12px;
+  width: 34px;
+  height: 15px;
+  border-radius: 12px 13px 7px 7px;
+  background: currentColor;
+  content: "";
+}
+
+.app-mark::after {
+  position: absolute;
+  top: 16px;
+  left: 22px;
+  width: 18px;
+  height: 15px;
+  border-radius: 10px 10px 2px 2px;
+  border: 5px solid currentColor;
+  border-bottom: 0;
+  content: "";
+}
+
+.app-mark span::before,
+.app-mark span::after {
+  position: absolute;
+  top: 35px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #17324d;
+  box-shadow: inset 0 0 0 2px #ffffff;
+  content: "";
+}
+
+.app-mark span::before {
+  left: 16px;
+}
+
+.app-mark span::after {
+  right: 16px;
+}
+
+.app-mark.small {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+}
+
+.app-mark.small::before {
+  top: 18px;
+  left: 8px;
+  width: 24px;
+  height: 11px;
+}
+
+.app-mark.small::after {
+  top: 12px;
+  left: 15px;
+  width: 11px;
+  height: 11px;
+  border-width: 4px;
+}
+
+.app-mark.small span::before,
+.app-mark.small span::after {
+  top: 27px;
+  width: 7px;
+  height: 7px;
+}
+
+.app-mark.small span::before {
+  left: 10px;
+}
+
+.app-mark.small span::after {
+  right: 10px;
 }
 
 .kicker {
@@ -84,8 +178,8 @@ h2 {
 }
 
 .login-card h1 {
-  margin-bottom: 24px;
-  font-size: 34px;
+  font-size: 28px;
+  line-height: 1.03;
 }
 
 .field {
@@ -173,8 +267,8 @@ h2 {
   z-index: 10;
   top: 0;
   display: grid;
-  border-bottom: 1px solid #c2b76c;
-  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0, 83, 149, 0.1);
+  padding: max(10px, env(safe-area-inset-top)) 14px 10px;
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(18px);
 }
@@ -186,8 +280,19 @@ h2 {
   gap: 12px;
 }
 
-.topbar img {
-  width: 160px;
+.topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+  color: var(--blue-dark);
+  font-size: 18px;
+}
+
+.topbar-brand strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-menu {
@@ -253,14 +358,14 @@ h2 {
 .tabs {
   position: fixed;
   right: 12px;
-  bottom: max(12px, env(safe-area-inset-bottom));
+  bottom: max(10px, env(safe-area-inset-bottom));
   left: 12px;
   z-index: 20;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
   border: 1px solid rgba(0, 83, 149, 0.14);
-  border-radius: 24px;
+  border-radius: 26px;
   padding: 8px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 18px 38px rgba(0, 53, 103, 0.18);
@@ -288,16 +393,19 @@ h2 {
 .view {
   display: grid;
   gap: 16px;
-  padding: 18px 14px 28px;
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 16px 12px 28px;
 }
 
 .panel {
-  padding: 18px;
+  padding: 18px 16px;
 }
 
 .panel h1 {
   margin-bottom: 6px;
-  font-size: 30px;
+  font-size: clamp(27px, 8vw, 32px);
+  line-height: 1.02;
 }
 
 .panel p {
@@ -370,7 +478,7 @@ h2 {
 
 .vehicle-card dl {
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-columns: 88px minmax(0, 1fr);
   gap: 7px 10px;
   margin: 12px 0 14px;
   font-size: 14px;
@@ -640,5 +748,39 @@ h2 {
 
   .form-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 390px) {
+  .login-card,
+  .panel {
+    border-radius: 16px;
+  }
+
+  .login-card {
+    padding: 22px 16px 20px;
+  }
+
+  .app-brand {
+    gap: 12px;
+  }
+
+  .field input,
+  .field select {
+    height: 46px;
+    font-size: 15px;
+  }
+
+  .primary,
+  .secondary,
+  .danger,
+  .ghost {
+    min-height: 42px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  .card-actions {
+    gap: 6px;
   }
 }

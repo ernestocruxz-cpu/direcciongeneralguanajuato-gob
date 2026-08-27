@@ -1,11 +1,11 @@
-const CACHE_NAME = "movilidad-pwa-v1";
+const CACHE_NAME = "vehiculos-pwa-v2";
 const APP_SHELL = [
   "/pwa/",
   "/pwa/index.html",
   "/pwa/css/app.css",
   "/pwa/js/app.js",
   "/pwa/manifest.webmanifest",
-  "/assets/logo-gobierno.png"
+  "/pwa/icon.svg"
 ];
 
 self.addEventListener("install", (event) => {

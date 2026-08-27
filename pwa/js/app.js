@@ -116,9 +116,13 @@ function renderLogin() {
   app.innerHTML = `
     <section class="login-screen">
       <form class="login-card" id="login-form">
-        <img class="brand-logo" src="/assets/logo-gobierno.png" alt="Gobierno Secretaria de Gobierno" />
-        <p class="kicker">Acceso interno</p>
-        <h1>Modulo movilidad</h1>
+        <div class="app-brand">
+          <span class="app-mark" aria-hidden="true"><span></span></span>
+          <div>
+            <p class="kicker">Acceso interno</p>
+            <h1>Control vehicular</h1>
+          </div>
+        </div>
         <label class="field">
           Correo
           <input name="email" type="email" autocomplete="username" required />
@@ -162,7 +166,10 @@ function renderShell(content) {
   app.innerHTML = `
     <header class="topbar">
       <div class="topbar-main">
-        <img src="/assets/logo-gobierno.png" alt="Gobierno Secretaria de Gobierno" />
+        <div class="topbar-brand">
+          <span class="app-mark small" aria-hidden="true"><span></span></span>
+          <strong>Vehiculos</strong>
+        </div>
         <div class="user-menu">
           <button class="avatar-button" type="button" data-user-menu>
             <span class="avatar">${escapeHtml(displayName.trim().charAt(0).toUpperCase() || "U")}</span>

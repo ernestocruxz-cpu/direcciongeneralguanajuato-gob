@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Control vehicular">
+  <defs>
+    <linearGradient id="bg" x1="96" y1="68" x2="416" y2="444" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0a84ff"/>
+      <stop offset=".58" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#34c759"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="132" fill="url(#bg)"/>
+  <path fill="#fff" d="M122 280c0-24 19-44 43-44h26l33-52c10-16 28-26 47-26h68c19 0 36 10 46 25l34 53h15c24 0 43 20 43 44v63c0 13-10 23-23 23h-25a64 64 0 0 1-126 0h-93a64 64 0 0 1-126 0h-19c-13 0-23-10-23-23v-63Zm128-84-25 40h153l-26-40c-3-5-8-8-14-8h-73c-6 0-12 3-15 8Z"/>
+  <circle cx="147" cy="366" r="34" fill="#17324d"/>
+  <circle cx="147" cy="366" r="15" fill="#fff"/>
+  <circle cx="366" cy="366" r="34" fill="#17324d"/>
+  <circle cx="366" cy="366" r="15" fill="#fff"/>
+</svg>
