@@ -265,7 +265,7 @@ h2 {
 
 .topbar {
   position: sticky;
-  z-index: 10;
+  z-index: 40;
   top: 0;
   display: grid;
   gap: 10px;
@@ -302,6 +302,7 @@ h2 {
 
 .user-menu {
   position: relative;
+  z-index: 60;
 }
 
 .avatar-button {
@@ -337,6 +338,7 @@ h2 {
 
 .dropdown {
   position: absolute;
+  z-index: 70;
   top: calc(100% + 8px);
   right: 0;
   display: none;
